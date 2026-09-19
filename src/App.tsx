@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  Cartesian3, Cesium3DTileset, Cesium3DTileStyle, Color, HeadingPitchRange, Math as CesiumMath, Matrix4,
+  BoundingSphere, Cartesian3, Color, HeadingPitchRange, Math as CesiumMath, Matrix4,
   OpenStreetMapImageryProvider, ScreenSpaceEventHandler, ScreenSpaceEventType, Viewer,
 } from 'cesium'
 import type { Cartesian2 } from 'cesium'
 import { createBuildingMotion } from './buildingMotion'
+import { createBuildingModels } from './buildingModels'
+import type { Storey } from './buildingModels'
 import { Icon } from './Icons'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
 
@@ -15,20 +17,24 @@ type Catalog = {
     ifcId: number
     bounds: { minimum: number[]; maximum: number[] }
   }
-  storeys: { sequence: number; name: string; elevation: number }[]
+  storeys: Storey[]
 }
 type LoadingState = 'loading' | 'ready' | 'error'
+type HoverFloor = { name: string; elevation: number } | null
 
 function App() {
   const rootRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const openRef = useRef<HTMLButtonElement>(null)
+  const floorTooltipRef = useRef<HTMLDivElement>(null)
   const actionsRef = useRef<{ select: () => void; close: () => void; focus: () => void } | null>(null)
   const [loadingState, setLoadingState] = useState<LoadingState>('loading')
   const [selected, setSelected] = useState(false)
   const [catalog, setCatalog] = useState<Catalog | null>(null)
   const [tab, setTab] = useState<'overview' | 'floors'>('overview')
+  const [hoverFloor, setHoverFloor] = useState<HoverFloor>(null)
+  const [modelStage, setModelStage] = useState<'loading' | 'preview' | 'floors' | 'fallback'>('loading')
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
@@ -60,74 +66,124 @@ function App() {
     const abortController = new AbortController()
     let cancelled = false
     let selectedBuilding = false
-    let tileset: Cesium3DTileset | undefined
-    let removeTileFailed: (() => void) | undefined
+    let buildingModels: ReturnType<typeof createBuildingModels> | undefined
+    let buildingSphere: BoundingSphere | undefined
+    let hoveredFloorName = ''
+
+    function clearHover() {
+      buildingModels?.highlight()
+      if (hoveredFloorName) { hoveredFloorName = ''; setHoverFloor(null) }
+      viewer.scene.canvas.style.cursor = 'grab'
+    }
 
     function focus() {
-      if (!tileset) return
-      if (selectedBuilding) { motion.resize(tileset.boundingSphere); return }
-      viewer.camera.flyToBoundingSphere(tileset.boundingSphere, {
+      if (!buildingSphere) return
+      clearHover()
+      if (selectedBuilding) { motion.resize(buildingSphere); return }
+      viewer.camera.flyToBoundingSphere(buildingSphere, {
         duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.9,
         offset: new HeadingPitchRange(CesiumMath.toRadians(25), CesiumMath.toRadians(-38), 240),
       })
     }
     function select() {
-      if (!tileset || selectedBuilding) return
+      if (!buildingSphere || selectedBuilding) return
+      clearHover()
       selectedBuilding = true
       setSelected(true)
-      motion.animate(true, tileset.boundingSphere, () => closeRef.current?.focus({ preventScroll: true }))
+      motion.animate(true, buildingSphere, () => closeRef.current?.focus({ preventScroll: true }))
     }
     function close() {
-      if (!tileset || !selectedBuilding) return
+      if (!buildingSphere || !selectedBuilding) return
+      clearHover()
       selectedBuilding = false
       setSelected(false)
       openRef.current?.focus({ preventScroll: true })
-      motion.animate(false, tileset.boundingSphere)
+      motion.animate(false, buildingSphere)
     }
     actionsRef.current = { select, close, focus }
 
     function isBuilding(position: Cartesian2) {
       const picked = viewer.scene.pick(position)
-      return !!tileset && (picked?.primitive === tileset || picked?.content?.tileset === tileset)
+      return buildingModels?.owns(picked?.primitive) ?? false
     }
     handler.setInputAction(({ position }: { position: Cartesian2 }) => {
       if (isBuilding(position)) select()
     }, ScreenSpaceEventType.LEFT_CLICK)
     handler.setInputAction(({ endPosition }: { endPosition: Cartesian2 }) => {
-      viewer.scene.canvas.style.cursor = isBuilding(endPosition) ? 'pointer' : 'grab'
+      // Pick the actual floor GLB, so stairs and overhangs retain their owning floor.
+      const picked = viewer.scene.pick(endPosition)
+      const overBuilding = buildingModels?.owns(picked?.primitive) ?? false
+      const tooltip = floorTooltipRef.current
+      if (!overBuilding || !tooltip || !viewer.scene.screenSpaceCameraController.enableInputs) {
+        clearHover()
+        return
+      }
+      viewer.scene.canvas.style.cursor = 'pointer'
+      const floor = buildingModels?.highlight(picked.primitive)
+      if (!floor) {
+        if (hoveredFloorName) { hoveredFloorName = ''; setHoverFloor(null) }
+        return
+      }
+      const left = Math.min(endPosition.x + 16, root.clientWidth - 150)
+      const top = Math.min(endPosition.y + 16, root.clientHeight - 62)
+      tooltip.style.transform = `translate3d(${Math.max(8, left)}px, ${Math.max(8, top)}px, 0)`
+      if (hoveredFloorName !== floor.name) {
+        hoveredFloorName = floor.name
+        setHoverFloor({ name: floor.name, elevation: floor.elevation })
+      }
     }, ScreenSpaceEventType.MOUSE_MOVE)
     // Prevent Cesium's default double-click from launching a competing camera action.
     viewer.screenSpaceEventHandler.removeInputAction(ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
     const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') close() }
     window.addEventListener('keydown', escape)
+    window.addEventListener('blur', clearHover)
+    viewer.scene.canvas.addEventListener('pointerleave', clearHover)
+    const removeCameraMoveStart = viewer.camera.moveStart.addEventListener(clearHover)
     const resize = new ResizeObserver(() => {
-      if (tileset && selectedBuilding) motion.resize(tileset.boundingSphere)
+      clearHover()
+      if (buildingSphere && selectedBuilding) motion.resize(buildingSphere)
     })
     resize.observe(root)
 
     async function load() {
       try {
-        const response = await fetch(`${import.meta.env.BASE_URL}sample_10/catalog.json`, { signal: abortController.signal })
-        if (!response.ok) throw new Error(`Catalog: ${response.status}`)
-        const data: Catalog = await response.json()
+        const baseUrl = `${import.meta.env.BASE_URL}sample_10/`
+        const [data, manifest] = await Promise.all(['catalog.json', 'tileset.json'].map(async file => {
+          const response = await fetch(`${baseUrl}${file}`, { signal: abortController.signal })
+          if (!response.ok) throw new Error(`${file}: ${response.status}`)
+          return response.json()
+        })) as [Catalog, { root: { transform: number[]; content: { uri: string } } }]
         if (cancelled) return
         setCatalog(data)
-        const loaded = await Cesium3DTileset.fromUrl(`${import.meta.env.BASE_URL}sample_10/tileset.json`)
-        if (cancelled) { loaded.destroy(); return }
-        tileset = loaded
-        tileset.style = new Cesium3DTileStyle({ color: "color('#637580')" })
-        // The root already contains the georeference transform. Do not apply it twice.
-        viewer.scene.primitives.add(tileset)
+        const transform = Matrix4.fromArray(manifest.root.transform)
+        buildingModels = createBuildingModels(viewer, transform, baseUrl)
         const { minimum: min, maximum: max } = data.building.bounds
+        const localSphere = BoundingSphere.fromCornerPoints(Cartesian3.fromArray(min), Cartesian3.fromArray(max))
+        buildingSphere = BoundingSphere.transform(localSphere, transform)
         const corners = [[min[0] - 2, min[1] - 2], [max[0] + 2, min[1] - 2],
           [max[0] + 2, max[1] + 2], [min[0] - 2, max[1] + 2], [min[0] - 2, min[1] - 2]]
-          .map(([x, y]) => Matrix4.multiplyByPoint(loaded.root.transform, new Cartesian3(x, y, 0.3), new Cartesian3()))
+          .map(([x, y]) => Matrix4.multiplyByPoint(transform, new Cartesian3(x, y, 0.3), new Cartesian3()))
         viewer.entities.add({ polyline: { positions: corners, width: 2, material: Color.fromCssColorString('#d1f171').withAlpha(0.85) } })
-        removeTileFailed = tileset.tileFailed.addEventListener(() => setLoadingState('error'))
-        viewer.camera.viewBoundingSphere(tileset.boundingSphere,
+        viewer.camera.viewBoundingSphere(buildingSphere,
           new HeadingPitchRange(CesiumMath.toRadians(25), CesiumMath.toRadians(-38), 240))
         viewer.camera.lookAtTransform(Matrix4.IDENTITY)
+        await buildingModels.loadPreview(manifest.root.content.uri)
+        if (cancelled) return
         setLoadingState('ready')
+        setModelStage('preview')
+        try {
+          const maskResponse = await fetch(`${baseUrl}structure.json`, { signal: abortController.signal })
+          if (!maskResponse.ok) throw new Error(`Floor structure: ${maskResponse.status}`)
+          const masks = await maskResponse.json()
+          if (cancelled) return
+          await buildingModels.loadFloors(data.storeys, masks)
+          if (!cancelled) setModelStage('floors')
+        } catch (error) {
+          if (!cancelled) {
+            console.error('Floor models failed; keeping building preview', error)
+            setModelStage('fallback')
+          }
+        }
       } catch (error) {
         if (!cancelled) { console.error('Building load failed', error); setLoadingState('error') }
       }
@@ -138,10 +194,13 @@ function App() {
       abortController.abort()
       resize.disconnect()
       window.removeEventListener('keydown', escape)
+      window.removeEventListener('blur', clearHover)
+      viewer.scene.canvas.removeEventListener('pointerleave', clearHover)
+      removeCameraMoveStart()
       actionsRef.current = null
-      removeTileFailed?.()
       motion.destroy()
       handler.destroy()
+      buildingModels?.destroy()
       viewer.destroy()
     }
   }, [])
@@ -157,9 +216,12 @@ function App() {
   const ready = loadingState === 'ready'
 
   return (
-    <main ref={rootRef} className="city-app" data-selected={selected}>
+    <main ref={rootRef} className="city-app" data-selected={selected} data-model-stage={modelStage}>
       <div ref={containerRef} className="map-canvas" aria-label="서울 3D 건물 지도" />
       <div className="map-vignette" />
+      <div ref={floorTooltipRef} className="floor-tooltip" data-visible={!!hoverFloor} role="status" aria-live="polite">
+        <span>FLOOR</span><strong>{hoverFloor?.name}</strong><small>{hoverFloor?.elevation.toFixed(1)} m</small>
+      </div>
       <header className="city-header">
         <div className="city-brand"><span className="brand-mark"><Icon name="layers" size={22} /></span><h1>SMART CITY<span>SEOUL · DIGITAL TWIN</span></h1></div>
         <div className="header-status"><span className="live-dot" />{ready ? 'SCENE CONNECTED' : loadingState === 'error' ? 'LOAD FAILED' : 'CONNECTING'}<span className="status-code">01 / SEOUL</span></div>
