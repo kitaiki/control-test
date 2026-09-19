@@ -1,0 +1,201 @@
+{
+  "asset": {
+    "version": "1.1",
+    "generator": "ifc3dtiles-python 0.3.0"
+  },
+  "schema": {
+    "id": "ifc3dtiles_metadata_1_0_0",
+    "classes": {
+      "building": {
+        "name": "IFC building",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "projectName": {
+            "type": "STRING"
+          },
+          "storeyCount": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "longitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "latitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "height": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          }
+        }
+      },
+      "storey": {
+        "name": "IFC building storey",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "ifcId": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "sequence": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "elevation": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "elementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "shapeCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "excludedDoorElementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "glbCount": {
+            "type": "SCALAR",
+            "componentType": "UINT8"
+          }
+        }
+      }
+    }
+  },
+  "groups": [
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 10,
+        "ifcId": 183,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zX",
+        "name": "지상 7층",
+        "elevation": 25.7000000000019,
+        "elementCount": 1326,
+        "shapeCount": 1458,
+        "excludedDoorElementCount": 17,
+        "spaceFloorCapTriangleCount": 49,
+        "spaceFloorCapAreaSquareMeters": 48.11255915234838,
+        "spaceFloorCapSpaceIds": [
+          59086,
+          59805,
+          60357,
+          60885,
+          62159,
+          62796,
+          64011,
+          64927,
+          65131,
+          65320,
+          66114,
+          91830,
+          92032,
+          92190,
+          92385,
+          92622,
+          92800,
+          97491
+        ],
+        "glbCount": 1
+      }
+    }
+  ],
+  "geometricError": 0.0,
+  "root": {
+    "boundingVolume": {
+      "box": [
+        32.78039780204856,
+        18.16982385669342,
+        27.71445935979,
+        18.914493406528564,
+        0.0,
+        0.0,
+        0.0,
+        17.812623851513415,
+        0.0,
+        0.0,
+        0.0,
+        2.6657394737500013
+      ]
+    },
+    "geometricError": 0.0,
+    "refine": "REPLACE",
+    "metadata": {
+      "class": "storey",
+      "properties": {
+        "sequence": 10,
+        "ifcId": 183,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zX",
+        "name": "지상 7층",
+        "elevation": 25.7000000000019,
+        "elementCount": 1326,
+        "shapeCount": 1458,
+        "excludedDoorElementCount": 17,
+        "spaceFloorCapTriangleCount": 49,
+        "spaceFloorCapAreaSquareMeters": 48.11255915234838,
+        "spaceFloorCapSpaceIds": [
+          59086,
+          59805,
+          60357,
+          60885,
+          62159,
+          62796,
+          64011,
+          64927,
+          65131,
+          65320,
+          66114,
+          91830,
+          92032,
+          92190,
+          92385,
+          92622,
+          92800,
+          97491
+        ],
+        "glbCount": 1
+      }
+    },
+    "content": {
+      "uri": "../../glb/storey_10_183.glb",
+      "group": 0
+    },
+    "transform": [
+      -0.798866885253504,
+      -0.6015078550155142,
+      4.853395833141622e-17,
+      0.0,
+      0.366728702657726,
+      -0.48705501346724667,
+      0.7926458682812908,
+      0.0,
+      -0.476782716016789,
+      0.633218535902934,
+      0.6096823168639539,
+      0.0,
+      -3044776.1290843748,
+      4043788.95845528,
+      3867420.139507464,
+      1.0
+    ]
+  }
+}

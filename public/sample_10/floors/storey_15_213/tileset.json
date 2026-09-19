@@ -1,0 +1,163 @@
+{
+  "asset": {
+    "version": "1.1",
+    "generator": "ifc3dtiles-python 0.3.0"
+  },
+  "schema": {
+    "id": "ifc3dtiles_metadata_1_0_0",
+    "classes": {
+      "building": {
+        "name": "IFC building",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "projectName": {
+            "type": "STRING"
+          },
+          "storeyCount": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "longitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "latitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "height": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          }
+        }
+      },
+      "storey": {
+        "name": "IFC building storey",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "ifcId": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "sequence": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "elevation": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "elementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "shapeCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "excludedDoorElementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "glbCount": {
+            "type": "SCALAR",
+            "componentType": "UINT8"
+          }
+        }
+      }
+    }
+  },
+  "groups": [
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 15,
+        "ifcId": 213,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6z5",
+        "name": "지붕층",
+        "elevation": 47.400000000001604,
+        "elementCount": 157,
+        "shapeCount": 284,
+        "excludedDoorElementCount": 0,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    }
+  ],
+  "geometricError": 0.0,
+  "root": {
+    "boundingVolume": {
+      "box": [
+        32.7687373907,
+        18.157173417400003,
+        47.5399980466,
+        18.8985577861,
+        0.0,
+        0.0,
+        0.0,
+        17.800037882599995,
+        0.0,
+        0.0,
+        0.0,
+        0.6886743624999951
+      ]
+    },
+    "geometricError": 0.0,
+    "refine": "REPLACE",
+    "metadata": {
+      "class": "storey",
+      "properties": {
+        "sequence": 15,
+        "ifcId": 213,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6z5",
+        "name": "지붕층",
+        "elevation": 47.400000000001604,
+        "elementCount": 157,
+        "shapeCount": 284,
+        "excludedDoorElementCount": 0,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    },
+    "content": {
+      "uri": "../../glb/storey_15_213.glb",
+      "group": 0
+    },
+    "transform": [
+      -0.798866885253504,
+      -0.6015078550155142,
+      4.853395833141622e-17,
+      0.0,
+      0.366728702657726,
+      -0.48705501346724667,
+      0.7926458682812908,
+      0.0,
+      -0.476782716016789,
+      0.633218535902934,
+      0.6096823168639539,
+      0.0,
+      -3044776.1290843748,
+      4043788.95845528,
+      3867420.139507464,
+      1.0
+    ]
+  }
+}
