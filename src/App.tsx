@@ -65,7 +65,7 @@ function App() {
 
     function focus() {
       if (!tileset) return
-      if (selectedBuilding) { motion.resize(tileset.boundingSphere.center); return }
+      if (selectedBuilding) { motion.resize(tileset.boundingSphere); return }
       viewer.camera.flyToBoundingSphere(tileset.boundingSphere, {
         duration: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 0.9,
         offset: new HeadingPitchRange(CesiumMath.toRadians(25), CesiumMath.toRadians(-38), 240),
@@ -75,14 +75,14 @@ function App() {
       if (!tileset || selectedBuilding) return
       selectedBuilding = true
       setSelected(true)
-      motion.animate(true, tileset.boundingSphere.center, () => closeRef.current?.focus({ preventScroll: true }))
+      motion.animate(true, tileset.boundingSphere, () => closeRef.current?.focus({ preventScroll: true }))
     }
     function close() {
       if (!tileset || !selectedBuilding) return
       selectedBuilding = false
       setSelected(false)
       openRef.current?.focus({ preventScroll: true })
-      motion.animate(false, tileset.boundingSphere.center)
+      motion.animate(false, tileset.boundingSphere)
     }
     actionsRef.current = { select, close, focus }
 
@@ -101,7 +101,7 @@ function App() {
     const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') close() }
     window.addEventListener('keydown', escape)
     const resize = new ResizeObserver(() => {
-      if (tileset && selectedBuilding) motion.resize(tileset.boundingSphere.center)
+      if (tileset && selectedBuilding) motion.resize(tileset.boundingSphere)
     })
     resize.observe(root)
 
@@ -162,7 +162,6 @@ function App() {
       <div className="map-vignette" />
       <header className="city-header">
         <div className="city-brand"><span className="brand-mark"><Icon name="layers" size={22} /></span><h1>SMART CITY<span>SEOUL · DIGITAL TWIN</span></h1></div>
-        <nav className="view-switch" aria-label="지도 보기 모드"><button className={!selected ? 'active' : ''} onClick={() => actionsRef.current?.close()}><Icon name="grid" size={14} />도시 보기</button><button className={selected ? 'active' : ''} disabled={!ready} onClick={() => actionsRef.current?.select()}><Icon name="building" size={14} />건물 분석</button></nav>
         <div className="header-status"><span className="live-dot" />{ready ? 'SCENE CONNECTED' : loadingState === 'error' ? 'LOAD FAILED' : 'CONNECTING'}<span className="status-code">01 / SEOUL</span></div>
       </header>
 
