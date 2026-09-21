@@ -1,11 +1,11 @@
 import {
-  Axis, Color, CustomShader, CustomShaderTranslucencyMode, Matrix4, Model, UniformType, Viewer,
+  Axis, Color, CustomShader, Matrix4, Model, UniformType, Viewer,
 } from 'cesium'
 import { prepareFloorStructure } from './floorStructure.ts'
 import type { StructureMask } from './floorStructure.ts'
 
 export type Storey = { sequence: number; name: string; elevation: number; glb: string }
-type FloorModel = { model: Model; storey: Storey; shader: CustomShader; hoverShader: CustomShader }
+type FloorModel = { model: Model; storey: Storey; shader: CustomShader }
 
 const baseColor = Color.fromCssColorString('#637580')
 const neonColor = Color.fromCssColorString('#ceff35')
@@ -68,7 +68,6 @@ export function createBuildingModels(viewer: Viewer, modelMatrix: Matrix4, baseU
     viewer.scene.primitives.remove(model)
     if (floor) {
       floor.shader.destroy()
-      floor.hoverShader.destroy()
       floors.delete(model)
     }
     models.delete(model)
@@ -78,13 +77,13 @@ export function createBuildingModels(viewer: Viewer, modelMatrix: Matrix4, baseU
     const next = floorsVisible && model ? floors.get(model) : undefined
     if (next === highlighted) return next?.storey
     if (highlighted) {
-      highlighted.model.customShader = highlighted.shader
+      highlighted.shader.setUniform('u_hover', 0)
       highlighted.model.color = baseColor
       highlighted.model.silhouetteSize = 0
     }
     highlighted = next
     if (next) {
-      next.model.customShader = next.hoverShader
+      next.shader.setUniform('u_hover', 1)
       next.model.color = Color.WHITE
     }
     viewer.scene.requestRender()
@@ -107,25 +106,33 @@ export function createBuildingModels(viewer: Viewer, modelMatrix: Matrix4, baseU
         assertActive()
         const fragmentShaderText = `
             void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
-              vec3 neon = vec3(0.808, 1.0, 0.208);
-              float structure = step(0.5, fsInput.attributes.structure);
-              vec3 selectedColor = mix(vec3(0.22, 0.32, 0.38), neon, structure);
-              material.diffuse = mix(material.diffuse, selectedColor, u_hover);
-              material.alpha *= mix(1.0, mix(0.055, 1.0, structure), u_hover);
-              material.emissive += neon * structure * u_hover * 1.4;
+              if (u_hover > 0.5) {
+                // Hide the facade only on the hovered floor.
+                if (fsInput.attributes.structure < 0.5) discard;
+                float role = fsInput.attributes.structure;
+                float frame = 1.0 - step(1.5, role);
+                float column = step(3.5, role);
+                float structure = max(frame, column);
+                // A pale luminous core with lime at grazing angles, like frosted light.
+                vec3 viewDirection = normalize(-fsInput.attributes.positionEC);
+                vec3 normal = normalize(material.normalEC);
+                float rim = pow(1.0 - abs(dot(normal, viewDirection)), 2.0);
+                vec3 lime = vec3(0.72, 1.0, 0.23);
+                vec3 core = vec3(0.94, 1.0, 0.68);
+                vec3 glow = mix(lime, core, rim * 0.65);
+                material.diffuse = mix(vec3(0.30, 0.38, 0.20), glow, mix(0.38, 0.75, structure));
+                material.emissive = glow * mix(0.22 + rim * 0.3, 0.9 + rim * 1.5, structure);
+                material.specular = vec3(0.18);
+                material.roughness = 0.5;
+              }
             }
           `
         const shader = new CustomShader({
           uniforms: { u_hover: { type: UniformType.FLOAT, value: 0 } },
           fragmentShaderText,
         })
-        const hoverShader = new CustomShader({
-          translucencyMode: CustomShaderTranslucencyMode.TRANSLUCENT,
-          uniforms: { u_hover: { type: UniformType.FLOAT, value: 1 } },
-          fragmentShaderText,
-        })
         model.customShader = shader
-        floors.set(model, { model, storey, shader, hoverShader })
+        floors.set(model, { model, storey, shader })
         await waitUntilRendered(model)
       }))
       assertActive()
@@ -140,6 +147,13 @@ export function createBuildingModels(viewer: Viewer, modelMatrix: Matrix4, baseU
       viewer.scene.requestRender()
     },
     owns(model: unknown): model is Model { return models.has(model as Model) },
+    // Pick the complete facade so the cutaway does not change the hovered floor.
+    withPickingSurface<T>(pick: () => T): T {
+      const active = highlighted
+      active?.shader.setUniform('u_hover', 0)
+      try { return pick() }
+      finally { active?.shader.setUniform('u_hover', 1) }
+    },
     highlight,
     destroy() {
       abort.abort()

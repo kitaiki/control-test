@@ -13,6 +13,7 @@ export function createBuildingMotion(viewer: Viewer, root: HTMLElement) {
   let origin: Cartesian3 | undefined
   let originRotation: Quaternion | undefined
   let target: CameraPose | undefined
+  let targetSphere: BoundingSphere | undefined
   let restoreInputs: boolean | undefined
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
@@ -105,8 +106,11 @@ export function createBuildingMotion(viewer: Viewer, root: HTMLElement) {
       origin = viewer.camera.positionWC.clone()
       originRotation = rotation()
     }
-    // Reopening a closing panel reuses its destination; no cumulative camera drift.
-    if (nextOpen && (progress === 0 || !target)) target = destination(sphere)
+    // Reuse a closing panel's destination only when reopening the same building.
+    if (nextOpen && (progress === 0 || !target || !BoundingSphere.equals(sphere, targetSphere))) {
+      target = destination(sphere)
+      targetSphere = BoundingSphere.clone(sphere)
+    }
     open = nextOpen
     const start = viewer.camera.positionWC.clone()
     const end = (nextOpen ? target?.position : origin) ?? start
@@ -142,7 +146,7 @@ export function createBuildingMotion(viewer: Viewer, root: HTMLElement) {
       if (t < 1) frame = requestAnimationFrame(tick)
       else {
         stop()
-        if (!nextOpen) { origin = undefined; originRotation = undefined; target = undefined }
+        if (!nextOpen) { origin = undefined; originRotation = undefined; target = undefined; targetSphere = undefined }
         complete?.()
       }
     }

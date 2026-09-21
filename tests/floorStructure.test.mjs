@@ -3,8 +3,9 @@ import fs from 'node:fs/promises'
 import test from 'node:test'
 import { prepareFloorStructure } from '../src/floorStructure.ts'
 
-test('structural masks match all 16 source GLBs and preserve original geometry', async () => {
-  const base = new URL('../public/sample_10/', import.meta.url)
+for (const dataset of ['sample_10', 'sample_ch_coords']) {
+test(`${dataset}: masks match all source GLBs and preserve original geometry`, async () => {
+  const base = new URL(`../public/${dataset}/`, import.meta.url)
   const catalog = JSON.parse(await fs.readFile(new URL('catalog.json', base), 'utf8'))
   const masks = JSON.parse(await fs.readFile(new URL('structure.json', base), 'utf8'))
   assert.equal(Object.keys(masks).length, catalog.storeys.length)
@@ -20,10 +21,11 @@ test('structural masks match all 16 source GLBs and preserve original geometry',
       assert.equal(entry.offset % 4, 0)
       assert.ok(entry.offset + entry.count <= roles.length)
     }
-    assert.ok(roles.every(value => value === 0 || value === 1))
+    assert.ok(roles.every(value => value >= 0 && value <= 4))
     if (storey.name.startsWith('지상')) {
-      assert.ok(roles.includes(1), `${storey.name} should contain structural members`)
-      assert.ok(roles.includes(0), `${storey.name} should contain transparent surfaces`)
+      assert.ok(roles.includes(1) || roles.includes(4), `${storey.name} should contain structural members`)
+      assert.ok(roles.includes(2), `${storey.name} should retain lit floor slabs`)
+      assert.ok(roles.includes(0), `${storey.name} should identify facade surfaces`)
     }
     prepareFloorStructure(gltf, mask)
     assert.deepEqual(gltf.meshes.slice(0, originalMeshes.length), originalMeshes)
@@ -38,3 +40,5 @@ test('structural masks match all 16 source GLBs and preserve original geometry',
     assert.equal(gltf.accessors.length, length, 'Repeated preparation must not duplicate attributes')
   }
 })
+
+}

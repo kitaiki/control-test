@@ -1,0 +1,1520 @@
+{
+  "asset": {
+    "version": "1.1",
+    "generator": "ifc3dtiles-python 0.3.0"
+  },
+  "schema": {
+    "id": "ifc3dtiles_metadata_1_0_0",
+    "classes": {
+      "building": {
+        "name": "IFC building",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "projectName": {
+            "type": "STRING"
+          },
+          "storeyCount": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "longitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "latitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "height": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          }
+        }
+      },
+      "storey": {
+        "name": "IFC building storey",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "ifcId": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "sequence": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "elevation": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "elementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "shapeCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "excludedDoorElementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "glbCount": {
+            "type": "SCALAR",
+            "componentType": "UINT8"
+          }
+        }
+      }
+    }
+  },
+  "groups": [
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 0,
+        "ifcId": 125,
+        "globalId": "0yGTSfXnf3Yh8q1C4pWXZ$",
+        "name": "PIT",
+        "elevation": -11.9,
+        "elementCount": 33,
+        "shapeCount": 49,
+        "excludedDoorElementCount": 5,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 1,
+        "ifcId": 131,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg4JT",
+        "name": "지하2층",
+        "elevation": -10.1,
+        "elementCount": 174,
+        "shapeCount": 217,
+        "excludedDoorElementCount": 6,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 2,
+        "ifcId": 137,
+        "globalId": "0yGTSfXnf3Yh8q1C4pWWp8",
+        "name": "지하1층",
+        "elevation": -6.1000000000000005,
+        "elementCount": 278,
+        "shapeCount": 394,
+        "excludedDoorElementCount": 7,
+        "spaceFloorCapTriangleCount": 40,
+        "spaceFloorCapAreaSquareMeters": 33.856885509522726,
+        "spaceFloorCapSpaceIds": [
+          270,
+          8863,
+          11885,
+          12092,
+          12270,
+          12596,
+          12898,
+          13247,
+          13703,
+          13996,
+          14174,
+          84279,
+          84417,
+          84565,
+          84715,
+          84973,
+          110243,
+          112276
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 3,
+        "ifcId": 143,
+        "globalId": "0yGTSfXnf3Yh8q1C4pWWp_",
+        "name": "GL",
+        "elevation": -0.14999999999999802,
+        "elementCount": 50,
+        "shapeCount": 68,
+        "excludedDoorElementCount": 0,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 4,
+        "ifcId": 147,
+        "globalId": "0yGTSfXnf3Yh8q1C4pWMK2",
+        "name": "지상 1층",
+        "elevation": 0.0,
+        "elementCount": 1224,
+        "shapeCount": 1429,
+        "excludedDoorElementCount": 40,
+        "spaceFloorCapTriangleCount": 38,
+        "spaceFloorCapAreaSquareMeters": 4.35361807878253,
+        "spaceFloorCapSpaceIds": [
+          551,
+          14357,
+          14711,
+          14934,
+          15200,
+          15436,
+          15692,
+          16090,
+          16311,
+          16639,
+          17020,
+          17415,
+          17666,
+          17860,
+          19170,
+          21528,
+          21749,
+          22485,
+          85198,
+          85425,
+          85588,
+          85820,
+          86023,
+          86324,
+          86487
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 5,
+        "ifcId": 153,
+        "globalId": "0yGTSfXnf3Yh8q1C4pWMQ3",
+        "name": "지상 2층",
+        "elevation": 4.80000000000099,
+        "elementCount": 1807,
+        "shapeCount": 1943,
+        "excludedDoorElementCount": 18,
+        "spaceFloorCapTriangleCount": 56,
+        "spaceFloorCapAreaSquareMeters": 48.2899614712595,
+        "spaceFloorCapSpaceIds": [
+          649,
+          818,
+          22758,
+          23060,
+          23384,
+          23666,
+          23990,
+          24382,
+          24828,
+          25070,
+          25264,
+          26006,
+          79678,
+          86725,
+          86962,
+          87139,
+          87290,
+          87493,
+          87651,
+          98274
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 6,
+        "ifcId": 159,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6yD",
+        "name": "지상 3층",
+        "elevation": 9.30000000000156,
+        "elementCount": 1886,
+        "shapeCount": 2142,
+        "excludedDoorElementCount": 18,
+        "spaceFloorCapTriangleCount": 48,
+        "spaceFloorCapAreaSquareMeters": 21.29215577091697,
+        "spaceFloorCapSpaceIds": [
+          26941,
+          27542,
+          28174,
+          28725,
+          30508,
+          31390,
+          33054,
+          34030,
+          34190,
+          34338,
+          35041,
+          87796,
+          87940,
+          88073,
+          88208,
+          88352,
+          88495,
+          96820,
+          97131
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 7,
+        "ifcId": 165,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6yA",
+        "name": "지상 4층",
+        "elevation": 13.4000000000016,
+        "elementCount": 1546,
+        "shapeCount": 1681,
+        "excludedDoorElementCount": 17,
+        "spaceFloorCapTriangleCount": 58,
+        "spaceFloorCapAreaSquareMeters": 48.259513828751274,
+        "spaceFloorCapSpaceIds": [
+          35406,
+          36221,
+          36888,
+          38678,
+          39435,
+          40943,
+          41457,
+          42207,
+          42410,
+          43097,
+          80102,
+          88638,
+          88777,
+          88926,
+          89077,
+          89280,
+          89438,
+          97222
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 8,
+        "ifcId": 171,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zp",
+        "name": "지상 5층",
+        "elevation": 17.500000000001602,
+        "elementCount": 1325,
+        "shapeCount": 1456,
+        "excludedDoorElementCount": 17,
+        "spaceFloorCapTriangleCount": 52,
+        "spaceFloorCapAreaSquareMeters": 48.129751162717085,
+        "spaceFloorCapSpaceIds": [
+          43340,
+          44118,
+          44836,
+          45388,
+          45915,
+          47189,
+          47825,
+          49043,
+          49961,
+          50165,
+          50409,
+          89586,
+          89788,
+          89945,
+          90141,
+          90378,
+          90556,
+          97311
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 9,
+        "ifcId": 177,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zu",
+        "name": "지상 6층",
+        "elevation": 21.6000000000016,
+        "elementCount": 1326,
+        "shapeCount": 1458,
+        "excludedDoorElementCount": 17,
+        "spaceFloorCapTriangleCount": 49,
+        "spaceFloorCapAreaSquareMeters": 48.10998961451647,
+        "spaceFloorCapSpaceIds": [
+          51189,
+          51965,
+          52683,
+          53234,
+          53761,
+          55034,
+          55671,
+          56890,
+          57822,
+          58026,
+          58270,
+          90755,
+          90993,
+          91171,
+          91322,
+          91525,
+          91682,
+          97400
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 10,
+        "ifcId": 183,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zX",
+        "name": "지상 7층",
+        "elevation": 25.7000000000019,
+        "elementCount": 1326,
+        "shapeCount": 1458,
+        "excludedDoorElementCount": 17,
+        "spaceFloorCapTriangleCount": 52,
+        "spaceFloorCapAreaSquareMeters": 48.11255915234846,
+        "spaceFloorCapSpaceIds": [
+          59086,
+          59805,
+          60357,
+          60885,
+          62159,
+          62796,
+          64011,
+          64927,
+          65131,
+          65320,
+          66114,
+          91830,
+          92032,
+          92190,
+          92385,
+          92622,
+          92800,
+          97491
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 11,
+        "ifcId": 189,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zk",
+        "name": "지상 8층",
+        "elevation": 29.800000000001603,
+        "elementCount": 1326,
+        "shapeCount": 1458,
+        "excludedDoorElementCount": 17,
+        "spaceFloorCapTriangleCount": 58,
+        "spaceFloorCapAreaSquareMeters": 47.43795508451336,
+        "spaceFloorCapSpaceIds": [
+          66908,
+          67627,
+          68198,
+          68705,
+          70114,
+          70354,
+          70557,
+          70806,
+          92999,
+          93236,
+          93413,
+          93564,
+          93766,
+          93923,
+          97581,
+          99355,
+          100638,
+          101253
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 12,
+        "ifcId": 195,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zN",
+        "name": "지상 9층",
+        "elevation": 33.9000000000012,
+        "elementCount": 1327,
+        "shapeCount": 1460,
+        "excludedDoorElementCount": 18,
+        "spaceFloorCapTriangleCount": 55,
+        "spaceFloorCapAreaSquareMeters": 47.36253816953117,
+        "spaceFloorCapSpaceIds": [
+          71601,
+          72145,
+          72657,
+          73575,
+          73875,
+          74742,
+          74932,
+          94071,
+          94273,
+          94430,
+          94625,
+          94862,
+          95039,
+          97672,
+          98641,
+          102462,
+          103745,
+          104360,
+          111584
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 13,
+        "ifcId": 201,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6zS",
+        "name": "지상 10층",
+        "elevation": 38.4000000000015,
+        "elementCount": 1329,
+        "shapeCount": 1462,
+        "excludedDoorElementCount": 18,
+        "spaceFloorCapTriangleCount": 51,
+        "spaceFloorCapAreaSquareMeters": 47.35996863791403,
+        "spaceFloorCapSpaceIds": [
+          75636,
+          76158,
+          76672,
+          77658,
+          78524,
+          78718,
+          78907,
+          95178,
+          95332,
+          95495,
+          95661,
+          95864,
+          96021,
+          97763,
+          98992,
+          105571,
+          106859,
+          107474,
+          108672
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 14,
+        "ifcId": 207,
+        "globalId": "0yGTSfXnf3Yh8q1C4pW4IP",
+        "name": "옥탑층",
+        "elevation": 43.4,
+        "elementCount": 180,
+        "shapeCount": 278,
+        "excludedDoorElementCount": 4,
+        "spaceFloorCapTriangleCount": 17,
+        "spaceFloorCapAreaSquareMeters": 44.21796766834289,
+        "spaceFloorCapSpaceIds": [
+          80672,
+          80860,
+          81047,
+          81217,
+          81399,
+          81584,
+          82018,
+          96187,
+          96389,
+          96650,
+          98194
+        ],
+        "glbCount": 1
+      }
+    },
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 15,
+        "ifcId": 213,
+        "globalId": "0yGTSfXnf3Yh8q1C4pg6z5",
+        "name": "지붕층",
+        "elevation": 47.400000000001604,
+        "elementCount": 157,
+        "shapeCount": 284,
+        "excludedDoorElementCount": 0,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    }
+  ],
+  "geometricError": 20.0,
+  "root": {
+    "boundingVolume": {
+      "box": [
+        31.518620124,
+        17.8135309648,
+        17.240316743199998,
+        21.600648323999998,
+        0.0,
+        0.0,
+        0.0,
+        18.905658535199997,
+        0.0,
+        0.0,
+        0.0,
+        30.990316543199995
+      ]
+    },
+    "geometricError": 20.0,
+    "refine": "REPLACE",
+    "metadata": {
+      "class": "building",
+      "properties": {
+        "globalId": "0yGTSfXnf3Yh8q1C7CVfl4",
+        "name": "Sample Building",
+        "projectName": "10S Sample Model",
+        "storeyCount": 16,
+        "longitude": 126.98001190000001,
+        "latitude": 37.5656599,
+        "height": 0.0
+      }
+    },
+    "content": {
+      "uri": "preview/building.glb"
+    },
+    "children": [
+      {
+        "boundingVolume": {
+          "box": [
+            33.01726508368,
+            25.0544513504,
+            -11.90055515702,
+            20.1007084144,
+            0.0,
+            0.0,
+            0.0,
+            10.852764549599998,
+            0.0,
+            0.0,
+            0.0,
+            1.8494446429800018
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 0,
+            "ifcId": 125,
+            "globalId": "0yGTSfXnf3Yh8q1C4pWXZ$",
+            "name": "PIT",
+            "elevation": -11.9,
+            "elementCount": 33,
+            "shapeCount": 49,
+            "excludedDoorElementCount": 5,
+            "spaceFloorCapTriangleCount": 0,
+            "spaceFloorCapAreaSquareMeters": 0.0,
+            "spaceFloorCapSpaceIds": [],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_00_125.glb",
+          "group": 0
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            31.518586490325,
+            17.4079712843,
+            -8.9095145253,
+            21.599388650025,
+            0.0,
+            0.0,
+            0.0,
+            18.499206415699998,
+            0.0,
+            0.0,
+            0.0,
+            3.0404860747000004
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 1,
+            "ifcId": 131,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg4JT",
+            "name": "지하2층",
+            "elevation": -10.1,
+            "elementCount": 174,
+            "shapeCount": 217,
+            "excludedDoorElementCount": 6,
+            "spaceFloorCapTriangleCount": 0,
+            "spaceFloorCapAreaSquareMeters": 0.0,
+            "spaceFloorCapSpaceIds": [],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_01_131.glb",
+          "group": 1
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            31.518586490325,
+            17.408005684299997,
+            -4.329867357874999,
+            21.599388650025,
+            0.0,
+            0.0,
+            0.0,
+            18.499206415699998,
+            0.0,
+            0.0,
+            0.0,
+            4.378779222125001
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 2,
+            "ifcId": 137,
+            "globalId": "0yGTSfXnf3Yh8q1C4pWWp8",
+            "name": "지하1층",
+            "elevation": -6.1000000000000005,
+            "elementCount": 278,
+            "shapeCount": 394,
+            "excludedDoorElementCount": 7,
+            "spaceFloorCapTriangleCount": 40,
+            "spaceFloorCapAreaSquareMeters": 33.856885509522726,
+            "spaceFloorCapSpaceIds": [
+              270,
+              8863,
+              11885,
+              12092,
+              12270,
+              12596,
+              12898,
+              13247,
+              13703,
+              13996,
+              14174,
+              84279,
+              84417,
+              84565,
+              84715,
+              84973,
+              110243,
+              112276
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_02_137.glb",
+          "group": 2
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            31.517973649744995,
+            17.407579801609998,
+            -0.07466580287999999,
+            21.600001849745,
+            0.0,
+            0.0,
+            0.0,
+            18.499632298389997,
+            0.0,
+            0.0,
+            0.0,
+            0.12533420312000002
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 3,
+            "ifcId": 143,
+            "globalId": "0yGTSfXnf3Yh8q1C4pWWp_",
+            "name": "GL",
+            "elevation": -0.14999999999999802,
+            "elementCount": 50,
+            "shapeCount": 68,
+            "excludedDoorElementCount": 0,
+            "spaceFloorCapTriangleCount": 0,
+            "spaceFloorCapAreaSquareMeters": 0.0,
+            "spaceFloorCapSpaceIds": [],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_03_143.glb",
+          "group": 3
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            31.568036318195,
+            17.86402376561,
+            -0.047779324639999565,
+            21.549940324935,
+            0.0,
+            0.0,
+            0.0,
+            18.85516573439,
+            0.0,
+            0.0,
+            0.0,
+            5.29640488536
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 4,
+            "ifcId": 147,
+            "globalId": "0yGTSfXnf3Yh8q1C4pWMK2",
+            "name": "지상 1층",
+            "elevation": 0.0,
+            "elementCount": 1224,
+            "shapeCount": 1429,
+            "excludedDoorElementCount": 40,
+            "spaceFloorCapTriangleCount": 38,
+            "spaceFloorCapAreaSquareMeters": 4.35361807878253,
+            "spaceFloorCapSpaceIds": [
+              551,
+              14357,
+              14711,
+              14934,
+              15200,
+              15436,
+              15692,
+              16090,
+              16311,
+              16639,
+              17020,
+              17415,
+              17666,
+              17860,
+              19170,
+              21528,
+              21749,
+              22485,
+              85198,
+              85425,
+              85588,
+              85820,
+              86023,
+              86324,
+              86487
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_04_147.glb",
+          "group": 4
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.767212173775,
+            18.158270530489997,
+            6.690518684545,
+            18.900753729755003,
+            0.0,
+            0.0,
+            0.0,
+            17.800293445829997,
+            0.0,
+            0.0,
+            0.0,
+            2.7892175940950006
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 5,
+            "ifcId": 153,
+            "globalId": "0yGTSfXnf3Yh8q1C4pWMQ3",
+            "name": "지상 2층",
+            "elevation": 4.80000000000099,
+            "elementCount": 1807,
+            "shapeCount": 1943,
+            "excludedDoorElementCount": 18,
+            "spaceFloorCapTriangleCount": 56,
+            "spaceFloorCapAreaSquareMeters": 48.2899614712595,
+            "spaceFloorCapSpaceIds": [
+              649,
+              818,
+              22758,
+              23060,
+              23384,
+              23666,
+              23990,
+              24382,
+              24828,
+              25070,
+              25264,
+              26006,
+              79678,
+              86725,
+              86962,
+              87139,
+              87290,
+              87493,
+              87651,
+              98274
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_05_153.glb",
+          "group": 5
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.76693515065,
+            18.182187655584016,
+            11.31559268855,
+            18.901030755129998,
+            0.0,
+            0.0,
+            0.0,
+            17.77502364441598,
+            0.0,
+            0.0,
+            0.0,
+            2.6657394737500013
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 6,
+            "ifcId": 159,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6yD",
+            "name": "지상 3층",
+            "elevation": 9.30000000000156,
+            "elementCount": 1886,
+            "shapeCount": 2142,
+            "excludedDoorElementCount": 18,
+            "spaceFloorCapTriangleCount": 48,
+            "spaceFloorCapAreaSquareMeters": 21.29215577091697,
+            "spaceFloorCapSpaceIds": [
+              26941,
+              27542,
+              28174,
+              28725,
+              30508,
+              31390,
+              33054,
+              34030,
+              34190,
+              34338,
+              35041,
+              87796,
+              87940,
+              88073,
+              88208,
+              88352,
+              88495,
+              96820,
+              97131
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_06_159.glb",
+          "group": 6
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.767712461235,
+            18.158270530489997,
+            15.012944280556194,
+            18.901254017215003,
+            0.0,
+            0.0,
+            0.0,
+            17.800293445829997,
+            0.0,
+            0.0,
+            0.0,
+            3.065603082263806
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 7,
+            "ifcId": 165,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6yA",
+            "name": "지상 4층",
+            "elevation": 13.4000000000016,
+            "elementCount": 1546,
+            "shapeCount": 1681,
+            "excludedDoorElementCount": 17,
+            "spaceFloorCapTriangleCount": 58,
+            "spaceFloorCapAreaSquareMeters": 48.259513828751274,
+            "spaceFloorCapSpaceIds": [
+              35406,
+              36221,
+              36888,
+              38678,
+              39435,
+              40943,
+              41457,
+              42207,
+              42410,
+              43097,
+              80102,
+              88638,
+              88777,
+              88926,
+              89077,
+              89280,
+              89438,
+              97222
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_07_165.glb",
+          "group": 7
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.76691306087999,
+            18.157318696430004,
+            19.5155295376,
+            18.901052927499997,
+            0.0,
+            0.0,
+            0.0,
+            17.80105200747,
+            0.0,
+            0.0,
+            0.0,
+            2.6650822359000017
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 8,
+            "ifcId": 171,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6zp",
+            "name": "지상 5층",
+            "elevation": 17.500000000001602,
+            "elementCount": 1325,
+            "shapeCount": 1456,
+            "excludedDoorElementCount": 17,
+            "spaceFloorCapTriangleCount": 52,
+            "spaceFloorCapAreaSquareMeters": 48.129751162717085,
+            "spaceFloorCapSpaceIds": [
+              43340,
+              44118,
+              44836,
+              45388,
+              45915,
+              47189,
+              47825,
+              49043,
+              49961,
+              50165,
+              50409,
+              89586,
+              89788,
+              89945,
+              90141,
+              90378,
+              90556,
+              97311
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_08_171.glb",
+          "group": 8
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.77980908110241,
+            18.169317382742463,
+            23.61623517868,
+            18.913948947722407,
+            0.0,
+            0.0,
+            0.0,
+            17.813050693782458,
+            0.0,
+            0.0,
+            0.0,
+            2.6650822359
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 9,
+            "ifcId": 177,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6zu",
+            "name": "지상 6층",
+            "elevation": 21.6000000000016,
+            "elementCount": 1326,
+            "shapeCount": 1458,
+            "excludedDoorElementCount": 17,
+            "spaceFloorCapTriangleCount": 49,
+            "spaceFloorCapAreaSquareMeters": 48.10998961451647,
+            "spaceFloorCapSpaceIds": [
+              51189,
+              51965,
+              52683,
+              53234,
+              53761,
+              55034,
+              55671,
+              56890,
+              57822,
+              58026,
+              58270,
+              90755,
+              90993,
+              91171,
+              91322,
+              91525,
+              91682,
+              97400
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_09_177.glb",
+          "group": 9
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.78039780204856,
+            18.16982385669342,
+            27.71445935979,
+            18.914493406528564,
+            0.0,
+            0.0,
+            0.0,
+            17.812623851513415,
+            0.0,
+            0.0,
+            0.0,
+            2.6657394737500013
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 10,
+            "ifcId": 183,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6zX",
+            "name": "지상 7층",
+            "elevation": 25.7000000000019,
+            "elementCount": 1326,
+            "shapeCount": 1458,
+            "excludedDoorElementCount": 17,
+            "spaceFloorCapTriangleCount": 52,
+            "spaceFloorCapAreaSquareMeters": 48.11255915234846,
+            "spaceFloorCapSpaceIds": [
+              59086,
+              59805,
+              60357,
+              60885,
+              62159,
+              62796,
+              64011,
+              64927,
+              65131,
+              65320,
+              66114,
+              91830,
+              92032,
+              92190,
+              92385,
+              92622,
+              92800,
+              97491
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_10_183.glb",
+          "group": 10
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.78127115853757,
+            18.169338966823943,
+            31.813611570179994,
+            18.91541102515757,
+            0.0,
+            0.0,
+            0.0,
+            17.813072277863938,
+            0.0,
+            0.0,
+            0.0,
+            2.6650822359
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 11,
+            "ifcId": 189,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6zk",
+            "name": "지상 8층",
+            "elevation": 29.800000000001603,
+            "elementCount": 1326,
+            "shapeCount": 1458,
+            "excludedDoorElementCount": 17,
+            "spaceFloorCapTriangleCount": 58,
+            "spaceFloorCapAreaSquareMeters": 47.43795508451336,
+            "spaceFloorCapSpaceIds": [
+              66908,
+              67627,
+              68198,
+              68705,
+              70114,
+              70354,
+              70557,
+              70806,
+              92999,
+              93236,
+              93413,
+              93564,
+              93766,
+              93923,
+              97581,
+              99355,
+              100638,
+              101253
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_11_189.glb",
+          "group": 11
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.78139963521304,
+            18.16946146769675,
+            36.10683860286,
+            18.91553950183304,
+            0.0,
+            0.0,
+            0.0,
+            17.813194778736744,
+            0.0,
+            0.0,
+            0.0,
+            2.857603627499998
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 12,
+            "ifcId": 195,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6zN",
+            "name": "지상 9층",
+            "elevation": 33.9000000000012,
+            "elementCount": 1327,
+            "shapeCount": 1460,
+            "excludedDoorElementCount": 18,
+            "spaceFloorCapTriangleCount": 55,
+            "spaceFloorCapAreaSquareMeters": 47.36253816953117,
+            "spaceFloorCapSpaceIds": [
+              71601,
+              72145,
+              72657,
+              73575,
+              73875,
+              74742,
+              74932,
+              94071,
+              94273,
+              94430,
+              94625,
+              94862,
+              95039,
+              97672,
+              98641,
+              102462,
+              103745,
+              104360,
+              111584
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_12_195.glb",
+          "group": 12
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.76691306087999,
+            18.15673899448,
+            40.86051263045,
+            18.901052927499997,
+            0.0,
+            0.0,
+            0.0,
+            17.800472305519996,
+            0.0,
+            0.0,
+            0.0,
+            3.109485781509999
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 13,
+            "ifcId": 201,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6zS",
+            "name": "지상 10층",
+            "elevation": 38.4000000000015,
+            "elementCount": 1329,
+            "shapeCount": 1462,
+            "excludedDoorElementCount": 18,
+            "spaceFloorCapTriangleCount": 51,
+            "spaceFloorCapAreaSquareMeters": 47.35996863791403,
+            "spaceFloorCapSpaceIds": [
+              75636,
+              76158,
+              76672,
+              77658,
+              78524,
+              78718,
+              78907,
+              95178,
+              95332,
+              95495,
+              95661,
+              95864,
+              96021,
+              97763,
+              98992,
+              105571,
+              106859,
+              107474,
+              108672
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_13_201.glb",
+          "group": 13
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.769453543915,
+            18.156712839145,
+            45.45068034026,
+            18.949485317734997,
+            0.0,
+            0.0,
+            0.0,
+            17.850470960855,
+            0.0,
+            0.0,
+            0.0,
+            2.70086333303
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 14,
+            "ifcId": 207,
+            "globalId": "0yGTSfXnf3Yh8q1C4pW4IP",
+            "name": "옥탑층",
+            "elevation": 43.4,
+            "elementCount": 180,
+            "shapeCount": 278,
+            "excludedDoorElementCount": 4,
+            "spaceFloorCapTriangleCount": 17,
+            "spaceFloorCapAreaSquareMeters": 44.21796766834289,
+            "spaceFloorCapSpaceIds": [
+              80672,
+              80860,
+              81047,
+              81217,
+              81399,
+              81584,
+              82018,
+              96187,
+              96389,
+              96650,
+              98194
+            ],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_14_207.glb",
+          "group": 14
+        }
+      },
+      {
+        "boundingVolume": {
+          "box": [
+            32.769767161835,
+            18.157248961055,
+            47.539496966979996,
+            18.899587235774998,
+            0.0,
+            0.0,
+            0.0,
+            17.799962338944997,
+            0.0,
+            0.0,
+            0.0,
+            0.6896098970099978
+          ]
+        },
+        "geometricError": 0.0,
+        "metadata": {
+          "class": "storey",
+          "properties": {
+            "sequence": 15,
+            "ifcId": 213,
+            "globalId": "0yGTSfXnf3Yh8q1C4pg6z5",
+            "name": "지붕층",
+            "elevation": 47.400000000001604,
+            "elementCount": 157,
+            "shapeCount": 284,
+            "excludedDoorElementCount": 0,
+            "spaceFloorCapTriangleCount": 0,
+            "spaceFloorCapAreaSquareMeters": 0.0,
+            "spaceFloorCapSpaceIds": [],
+            "glbCount": 1
+          }
+        },
+        "content": {
+          "uri": "glb/storey_15_213.glb",
+          "group": 15
+        }
+      }
+    ],
+    "transform": [
+      -0.7988454095246211,
+      -0.6015363760251249,
+      4.853452911540396e-17,
+      0.0,
+      0.3667388010418536,
+      -0.48703223842045984,
+      0.7926551901990803,
+      0.0,
+      -0.47681093054986085,
+      0.6332089600264007,
+      0.609670197279201,
+      0.0,
+      -3044956.158566255,
+      4043727.605548462,
+      3867343.0691271783,
+      1.0
+    ]
+  }
+}

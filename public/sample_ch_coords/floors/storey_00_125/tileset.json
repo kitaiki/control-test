@@ -1,0 +1,163 @@
+{
+  "asset": {
+    "version": "1.1",
+    "generator": "ifc3dtiles-python 0.3.0"
+  },
+  "schema": {
+    "id": "ifc3dtiles_metadata_1_0_0",
+    "classes": {
+      "building": {
+        "name": "IFC building",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "projectName": {
+            "type": "STRING"
+          },
+          "storeyCount": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "longitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "latitude": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "height": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          }
+        }
+      },
+      "storey": {
+        "name": "IFC building storey",
+        "properties": {
+          "globalId": {
+            "type": "STRING",
+            "semantic": "ID"
+          },
+          "name": {
+            "type": "STRING",
+            "semantic": "NAME"
+          },
+          "ifcId": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "sequence": {
+            "type": "SCALAR",
+            "componentType": "UINT16"
+          },
+          "elevation": {
+            "type": "SCALAR",
+            "componentType": "FLOAT64"
+          },
+          "elementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "shapeCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "excludedDoorElementCount": {
+            "type": "SCALAR",
+            "componentType": "UINT32"
+          },
+          "glbCount": {
+            "type": "SCALAR",
+            "componentType": "UINT8"
+          }
+        }
+      }
+    }
+  },
+  "groups": [
+    {
+      "class": "storey",
+      "properties": {
+        "sequence": 0,
+        "ifcId": 125,
+        "globalId": "0yGTSfXnf3Yh8q1C4pWXZ$",
+        "name": "PIT",
+        "elevation": -11.9,
+        "elementCount": 33,
+        "shapeCount": 49,
+        "excludedDoorElementCount": 5,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    }
+  ],
+  "geometricError": 20.0,
+  "root": {
+    "boundingVolume": {
+      "box": [
+        33.01726508368,
+        25.0544513504,
+        -11.90055515702,
+        20.1007084144,
+        0.0,
+        0.0,
+        0.0,
+        10.852764549599998,
+        0.0,
+        0.0,
+        0.0,
+        1.8494446429800018
+      ]
+    },
+    "geometricError": 0.0,
+    "refine": "REPLACE",
+    "metadata": {
+      "class": "storey",
+      "properties": {
+        "sequence": 0,
+        "ifcId": 125,
+        "globalId": "0yGTSfXnf3Yh8q1C4pWXZ$",
+        "name": "PIT",
+        "elevation": -11.9,
+        "elementCount": 33,
+        "shapeCount": 49,
+        "excludedDoorElementCount": 5,
+        "spaceFloorCapTriangleCount": 0,
+        "spaceFloorCapAreaSquareMeters": 0.0,
+        "spaceFloorCapSpaceIds": [],
+        "glbCount": 1
+      }
+    },
+    "content": {
+      "uri": "../../glb/storey_00_125.glb",
+      "group": 0
+    },
+    "transform": [
+      -0.7988454095246211,
+      -0.6015363760251249,
+      4.853452911540396e-17,
+      0.0,
+      0.3667388010418536,
+      -0.48703223842045984,
+      0.7926551901990803,
+      0.0,
+      -0.47681093054986085,
+      0.6332089600264007,
+      0.609670197279201,
+      0.0,
+      -3044956.158566255,
+      4043727.605548462,
+      3867343.0691271783,
+      1.0
+    ]
+  }
+}

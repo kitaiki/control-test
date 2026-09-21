@@ -101,3 +101,31 @@ test('unmount during floor preparation releases models and pending render listen
   assert.equal(ctx.postRender.numberOfListeners, 0)
   assert.equal(ctx.loaded.every(model => model.destroyed), true)
 })
+
+test('repeated hover keeps one floor lit and clearing hover restores all floors', async t => {
+  const ctx = setup(t)
+  await renderPreview(ctx)
+  const loading = ctx.building.loadFloors(storeys, masks)
+  await setImmediate()
+  const floors = ctx.loaded.slice(1)
+  floors.forEach(model => { model.ready = true })
+  ctx.postRender.raiseEvent()
+  await loading
+  ctx.building.highlight(floors[6])
+  const shader = floors[6].customShader
+  for (let i = 0; i < 10; i++) {
+    const picked = ctx.building.withPickingSurface(() => {
+      assert.equal(shader.uniforms.u_hover.value, 0)
+      return floors[6]
+    })
+    assert.equal(ctx.building.highlight(picked), storeys[6])
+    assert.equal(shader.uniforms.u_hover.value, 1)
+  }
+  assert.throws(() => ctx.building.withPickingSurface(() => { throw new Error('pick failed') }), /pick failed/)
+  assert.equal(shader.uniforms.u_hover.value, 1)
+  ctx.building.highlight(floors[7])
+  assert.equal(shader.uniforms.u_hover.value, 0)
+  assert.equal(floors.filter(model => model.customShader.uniforms.u_hover.value === 1).length, 1)
+  ctx.building.highlight()
+  assert.ok(floors.every(model => model.customShader.uniforms.u_hover.value === 0))
+})

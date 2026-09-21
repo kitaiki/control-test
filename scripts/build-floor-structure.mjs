@@ -1,10 +1,14 @@
 import fs from 'node:fs/promises'
+import { classifyFloorPart } from './floor-part-role.mjs'
 import { MeshoptDecoder } from 'meshoptimizer'
 import { Cartesian3 as C, Matrix4 as M, Quaternion as Q } from 'cesium'
 
 // Recover disconnected geometry islands from gltfpack's merged primitives.
 await MeshoptDecoder.ready
-const folder = new URL('../public/sample_10/', import.meta.url)
+const datasets = process.argv.slice(2)
+for (const dataset of datasets.length ? datasets : ['sample_10', 'sample_ch_coords']) {
+if (!/^[a-zA-Z0-9_-]+$/.test(dataset)) throw new Error('Invalid dataset name')
+const folder = new URL(`../public/${dataset}/`, import.meta.url)
 const catalog = JSON.parse(await fs.readFile(new URL('catalog.json', folder), 'utf8'))
 const result = {}
 for (const floor of catalog.storeys) {
@@ -46,7 +50,9 @@ for (const floor of catalog.storeys) {
     return values
   }
   const chunks = [], entries = []
-  let offset = 0, columns = 0, beams = 0
+  let offset = 0
+  const parts = []
+  const envelope = { min: new C(Infinity, Infinity, Infinity), max: new C(-Infinity, -Infinity, -Infinity) }
   function walk(index, parent) {
     const n = gltf.nodes[index]
     const local = n.matrix ? M.fromArray(n.matrix) : M.fromTranslationQuaternionRotationScale(
@@ -64,8 +70,8 @@ for (const floor of catalog.storeys) {
     if (n.mesh !== undefined) gltf.meshes[n.mesh].primitives.forEach((p, primitive) => {
       const points = accessor(p.attributes.POSITION)
       const mask = new Uint8Array(Math.ceil(points.length / 4) * 4)
-      const name = gltf.materials?.[p.material]?.name ?? ''
-      if ((p.mode ?? 4) === 4 && gltf.materials?.[p.material]?.alphaMode !== 'BLEND' && !/Ifc(Wall|Window|Door|Slab|Roof)|floor-cap/i.test(name)) {
+      const material = gltf.materials?.[p.material] ?? {}
+      if ((p.mode ?? 4) === 4) {
         const parents = points.map((_, i) => i)
         function find(i) { while (parents[i] !== i) { parents[i] = parents[parents[i]]; i = parents[i] } return i }
         function join(a,b) { parents[find(b)] = find(a) }
@@ -87,24 +93,27 @@ for (const floor of catalog.storeys) {
           item.indices.push(i)
         })
         for (const group of groups.values()) {
-          const d = C.subtract(group.max,group.min,new C())
-          const [short,long] = [d.x,d.z].sort((a,b)=>a-b)
-          const column = d.y>=1.8 && short>=0.12 && long<=1.6 && d.y>=long*2
-          const beam = long>=2 && short>=0.15 && short<=1.2 && d.y>=0.15 && d.y<=1.2 && long>=d.y*3
-          if (/Ifc(Column|Beam|Member)/i.test(name) || column || beam) {
-            group.indices.forEach(i => {mask[i]=1})
-            if (column) columns++
-            else beams++
-          }
+          C.minimumByComponent(envelope.min, group.min, envelope.min)
+          C.maximumByComponent(envelope.max, group.max, envelope.max)
+          parts.push({ group, material, mask })
         }
       }
+
       entries.push({node:index,primitive,offset,count:points.length})
       chunks.push(mask); offset += mask.length
     })
     for (const child of n.children ?? []) walk(child,transform)
   }
   for (const index of gltf.scenes[gltf.scene ?? 0].nodes) walk(index,M.IDENTITY)
+  const counts = [0, 0, 0, 0, 0]
+  for (const { group, material, mask } of parts) {
+    const role = classifyFloorPart(group, envelope, material)
+    group.indices.forEach(i => { mask[i] = role })
+    counts[role]++
+  }
   result[floor.glb] = {entries, bytes:Buffer.concat(chunks).toString('base64')}
-  console.log(`${floor.name}: ${columns} column-like, ${beams} beam-like components`)
+  console.log(`${dataset} / ${floor.name}: facade, beam/member, slab, interior, column = ${counts.join(", ")}`)
 }
 await fs.writeFile(new URL('structure.json',folder),JSON.stringify(result))
+
+}

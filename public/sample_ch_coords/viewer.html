@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IFC 층별 3D Tiles 뷰어</title>
+  <script src="https://unpkg.com/cesium@1.144.0/Build/Cesium/Cesium.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/cesium@1.144.0/Build/Cesium/Widgets/widgets.css">
+  <style>
+    html, body, #cesiumContainer { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    #toolbar {
+      position: absolute; z-index: 1; top: 12px; left: 12px; padding: 12px;
+      border-radius: 8px; background: rgba(20, 26, 34, .92); color: #fff;
+      font: 14px/1.4 system-ui, sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,.3);
+    }
+    #toolbar select { min-width: 190px; margin-left: 8px; padding: 6px; }
+    #status { margin-top: 8px; color: #b8c7db; max-width: 360px; }
+    #status.error { color: #ff9f9f; }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="toolbar">
+    <label>표출 범위 <select id="storey"><option value="all">전체 건물</option></select></label>
+    <div id="status">tileset을 불러오는 중입니다.</div>
+  </div>
+  <script>
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+      baseLayer: false,
+      terrainProvider: new Cesium.EllipsoidTerrainProvider(),
+      animation: false,
+      timeline: false,
+      geocoder: false,
+      homeButton: false,
+      sceneModePicker: false,
+      navigationHelpButton: false
+    });
+    viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#16202a");
+    const select = document.getElementById("storey");
+    const status = document.getElementById("status");
+    let activeTileset;
+    let loadingTileset;
+
+    function setStatus(message, error = false) {
+      status.textContent = message;
+      status.classList.toggle("error", error);
+    }
+
+    function waitForRenderableTile(tileset) {
+      if (tileset.tilesLoaded) return Promise.resolve();
+      return new Promise((resolve, reject) => {
+        let settled = false;
+        let removeTileLoad = () => {};
+        let removeLoaded = () => {};
+        let removeFailed = () => {};
+
+        const finish = (callback, value) => {
+          if (settled) return;
+          settled = true;
+          removeTileLoad();
+          removeLoaded();
+          removeFailed();
+          callback(value);
+        };
+
+        removeTileLoad = tileset.tileLoad.addEventListener(() => {
+          finish(resolve);
+        });
+        removeLoaded = tileset.initialTilesLoaded.addEventListener(() => {
+          finish(resolve);
+        });
+        removeFailed = tileset.tileFailed.addEventListener(error => {
+          finish(reject, new Error(`${error.message} (${error.url})`));
+        });
+
+        if (tileset.tilesLoaded) finish(resolve);
+      });
+    }
+
+    function moveCameraToTileset(tileset) {
+      const range = Math.max(tileset.boundingSphere.radius * 2.5, 50.0);
+      viewer.camera.viewBoundingSphere(
+        tileset.boundingSphere,
+        new Cesium.HeadingPitchRange(0.0, -0.5, range)
+      );
+      viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+    }
+
+    async function showTileset(url, label) {
+      if (loadingTileset) return;
+      select.disabled = true;
+      setStatus(`${label} tileset 정보 로딩 중...`);
+
+      const previousTileset = activeTileset;
+      if (previousTileset) previousTileset.show = false;
+      let nextTileset;
+      let removeProgress = () => {};
+
+      try {
+        nextTileset = await Cesium.Cesium3DTileset.fromUrl(url);
+        loadingTileset = nextTileset;
+
+        nextTileset.tileFailed.addEventListener(error => {
+          if (activeTileset === nextTileset || loadingTileset === nextTileset) {
+            setStatus(`오류: ${error.message} (${error.url})`, true);
+          }
+        });
+        removeProgress = nextTileset.loadProgress.addEventListener(
+          (pendingRequests, processingTiles) => {
+            if (loadingTileset === nextTileset) {
+              setStatus(
+                `${label} 로딩 중... 요청 ${pendingRequests}, 처리 ${processingTiles}`
+              );
+            }
+          }
+        );
+
+        const initialTiles = waitForRenderableTile(nextTileset);
+        initialTiles.catch(() => {});
+        viewer.scene.primitives.add(nextTileset);
+        nextTileset.show = true;
+        viewer.scene.requestRender();
+
+        const zoomed = await viewer.zoomTo(nextTileset);
+        if (!zoomed) moveCameraToTileset(nextTileset);
+
+        await initialTiles;
+        if (previousTileset && previousTileset !== nextTileset) {
+          viewer.scene.primitives.remove(previousTileset);
+        }
+        activeTileset = nextTileset;
+        loadingTileset = undefined;
+        setStatus(label);
+      } catch (error) {
+        if (nextTileset && nextTileset !== activeTileset) {
+          viewer.scene.primitives.remove(nextTileset);
+        }
+        if (previousTileset) {
+          previousTileset.show = true;
+          const restored = await viewer.zoomTo(previousTileset);
+          if (!restored) moveCameraToTileset(previousTileset);
+        }
+        loadingTileset = undefined;
+        setStatus(`오류: ${error.message}`, true);
+        console.error(error);
+      } finally {
+        removeProgress();
+        select.disabled = false;
+      }
+    }
+
+    async function start() {
+      const catalog = await (await fetch("./catalog.json", { cache: "no-store" })).json();
+      for (const storey of catalog.storeys) {
+        const option = document.createElement("option");
+        option.value = storey.tileset;
+        option.textContent = `${storey.name} (${storey.elevation.toFixed(3)}m)`;
+        select.appendChild(option);
+      }
+      select.addEventListener("change", async () => {
+        const option = select.options[select.selectedIndex];
+        const url = select.value === "all" ? "./tileset.json" : `./${select.value}`;
+        await showTileset(url, option.textContent);
+      });
+      await showTileset("./tileset.json", `${catalog.building.name} · 전체 건물`);
+    }
+    start().catch(error => {
+      console.error(error);
+      setStatus(`오류: ${error.message}`, true);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+{
+  "asset": {
+    "version": "1.0",
+    "generator": "ifc3dtiles-python 0.3.0"
+  },
+  "building": {
+    "ifcId": 114,
+    "globalId": "0yGTSfXnf3Yh8q1C7CVfl4",
+    "name": "Sample Building",
+    "projectName": "10S Sample Model",
+    "bounds": {
+      "minimum": [
+        9.9179718,
+        -1.0921275703999982,
+        -13.749999800000001
+      ],
+      "maximum": [
+        53.119268448,
+        36.7191895,
+        48.23063328639999
+      ]
+    }
+  },
+  "tileset": "tileset.json",
+  "navigationNodes": "navigation-nodes.json",
+  "storeys": [
+    {
+      "sequence": 0,
+      "name": "PIT",
+      "elevation": -11.9,
+      "glb": "glb/storey_00_125.glb",
+      "tileset": "floors/storey_00_125/tileset.json"
+    },
+    {
+      "sequence": 1,
+      "name": "지하2층",
+      "elevation": -10.1,
+      "glb": "glb/storey_01_131.glb",
+      "tileset": "floors/storey_01_131/tileset.json"
+    },
+    {
+      "sequence": 2,
+      "name": "지하1층",
+      "elevation": -6.1000000000000005,
+      "glb": "glb/storey_02_137.glb",
+      "tileset": "floors/storey_02_137/tileset.json"
+    },
+    {
+      "sequence": 3,
+      "name": "GL",
+      "elevation": -0.14999999999999802,
+      "glb": "glb/storey_03_143.glb",
+      "tileset": "floors/storey_03_143/tileset.json"
+    },
+    {
+      "sequence": 4,
+      "name": "지상 1층",
+      "elevation": 0.0,
+      "glb": "glb/storey_04_147.glb",
+      "tileset": "floors/storey_04_147/tileset.json"
+    },
+    {
+      "sequence": 5,
+      "name": "지상 2층",
+      "elevation": 4.80000000000099,
+      "glb": "glb/storey_05_153.glb",
+      "tileset": "floors/storey_05_153/tileset.json"
+    },
+    {
+      "sequence": 6,
+      "name": "지상 3층",
+      "elevation": 9.30000000000156,
+      "glb": "glb/storey_06_159.glb",
+      "tileset": "floors/storey_06_159/tileset.json"
+    },
+    {
+      "sequence": 7,
+      "name": "지상 4층",
+      "elevation": 13.4000000000016,
+      "glb": "glb/storey_07_165.glb",
+      "tileset": "floors/storey_07_165/tileset.json"
+    },
+    {
+      "sequence": 8,
+      "name": "지상 5층",
+      "elevation": 17.500000000001602,
+      "glb": "glb/storey_08_171.glb",
+      "tileset": "floors/storey_08_171/tileset.json"
+    },
+    {
+      "sequence": 9,
+      "name": "지상 6층",
+      "elevation": 21.6000000000016,
+      "glb": "glb/storey_09_177.glb",
+      "tileset": "floors/storey_09_177/tileset.json"
+    },
+    {
+      "sequence": 10,
+      "name": "지상 7층",
+      "elevation": 25.7000000000019,
+      "glb": "glb/storey_10_183.glb",
+      "tileset": "floors/storey_10_183/tileset.json"
+    },
+    {
+      "sequence": 11,
+      "name": "지상 8층",
+      "elevation": 29.800000000001603,
+      "glb": "glb/storey_11_189.glb",
+      "tileset": "floors/storey_11_189/tileset.json"
+    },
+    {
+      "sequence": 12,
+      "name": "지상 9층",
+      "elevation": 33.9000000000012,
+      "glb": "glb/storey_12_195.glb",
+      "tileset": "floors/storey_12_195/tileset.json"
+    },
+    {
+      "sequence": 13,
+      "name": "지상 10층",
+      "elevation": 38.4000000000015,
+      "glb": "glb/storey_13_201.glb",
+      "tileset": "floors/storey_13_201/tileset.json"
+    },
+    {
+      "sequence": 14,
+      "name": "옥탑층",
+      "elevation": 43.4,
+      "glb": "glb/storey_14_207.glb",
+      "tileset": "floors/storey_14_207/tileset.json"
+    },
+    {
+      "sequence": 15,
+      "name": "지붕층",
+      "elevation": 47.400000000001604,
+      "glb": "glb/storey_15_213.glb",
+      "tileset": "floors/storey_15_213/tileset.json"
+    }
+  ]
+}

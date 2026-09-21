@@ -1,3 +1,5 @@
+// Vertex roles: 0 facade, 1 beams/members, 2 slabs, 3 interior, 4 columns.
+// Generated with: node scripts/build-floor-structure.mjs [dataset ...]
 export type StructureMask = {
   entries: { node: number; primitive: number; offset: number; count: number }[]
   bytes: string
