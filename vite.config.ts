@@ -3,8 +3,17 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
+const geoserverProxy = {
+  '/geoserver': {
+    target: 'http://192.168.0.232:8897', changeOrigin: true,
+    timeout: 20_000, proxyTimeout: 20_000,
+  },
+}
+
 // https://vite.dev/config/
 export default defineConfig({
+  server: { proxy: geoserverProxy },
+  preview: { proxy: geoserverProxy },
   define: {
     CESIUM_BASE_URL: JSON.stringify('/cesiumStatic'),
   },

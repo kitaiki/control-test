@@ -166,3 +166,22 @@
   .footer-time { padding: 0 8px; }
   .cesium-viewer-bottom { left: 12px !important; }
 }
+
+.road-card .card-heading h2 { font-size: 17px; }
+.road-toggle, .road-play, .road-retry { border: 1px solid #7ceeff45; padding: 6px 8px; color: #a1eff9; background: #7ceeff0a; font-size: 10px; }
+.road-toggle[aria-pressed=false] { color: #89928f; border-color: var(--line); }
+.road-controls { display: flex; align-items: center; gap: 10px; }
+.road-play { flex-shrink: 0; min-width: 72px; }
+.road-controls label { display: flex; flex: 1; min-width: 0; white-space: nowrap; align-items: center; gap: 6px; font-size: 10px; color: #aebfbe; }
+.road-controls input { flex: 1; min-width: 35px; width: 0; accent-color: #7ceeff; }
+.road-controls output { min-width: 30px; font-variant-numeric: tabular-nums; }
+.road-status { margin-top: 10px; font-size: 10px; color: #b9cbd1; line-height: 1.6; overflow-wrap: anywhere; }
+.road-note { margin-top: 6px; font-size: 8px; color: #849396; }
+.road-retry { margin-top: 8px; }
+.road-card button:disabled { cursor: default; }
+@media (max-width: 719px) {
+  .overview-stack > .road-card { padding: 12px; }
+  .road-card .card-heading { margin-bottom: 8px; }
+  .road-note { display: none; }
+  .road-controls input { max-width: 140px; }
+}

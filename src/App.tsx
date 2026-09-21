@@ -8,6 +8,8 @@ import { createBuildingMotion } from './buildingMotion'
 import { createBuildingModels } from './buildingModels'
 import type { Storey } from './buildingModels'
 import { Icon } from './Icons'
+import { createRoadFlow } from './roadFlow'
+import type { RoadState } from './roadFlow'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
 
 type Catalog = {
@@ -42,6 +44,11 @@ function App() {
   const [tab, setTab] = useState<'overview' | 'floors'>('overview')
   const [hoverFloor, setHoverFloor] = useState<HoverFloor>(null)
   const [modelStage, setModelStage] = useState<'loading' | 'preview' | 'floors' | 'fallback'>('loading')
+  const roadsRef = useRef<ReturnType<typeof createRoadFlow> | null>(null)
+  const [roadState, setRoadState] = useState<RoadState>({ status: 'idle', count: 0, limited: false })
+  const [roadsEnabled, setRoadsEnabled] = useState(true)
+  const [roadsPlaying, setRoadsPlaying] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  const [roadSpeed, setRoadSpeed] = useState(1)
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
@@ -79,6 +86,8 @@ function App() {
     bloom.uniforms.sigma = 3.2
     bloom.uniforms.stepSize = 2.0
 
+    const roads = createRoadFlow(viewer, setRoadState)
+    roadsRef.current = roads
     const motion = createBuildingMotion(viewer, root)
     const handler = new ScreenSpaceEventHandler(viewer.scene.canvas)
     const abortController = new AbortController()
@@ -213,6 +222,7 @@ function App() {
       viewer.camera.viewBoundingSphere(overviewSphere,
         new HeadingPitchRange(CesiumMath.toRadians(25), CesiumMath.toRadians(-38), Math.max(240, overviewSphere.radius * 3.4)))
       viewer.camera.lookAtTransform(Matrix4.IDENTITY)
+      void roads.refresh()
       const results = await Promise.allSettled(prepared.map(async ({ item, baseUrl, manifest }) => {
         try {
           await item.models.loadPreview(manifest.root.content.uri)
@@ -246,6 +256,8 @@ function App() {
       viewer.scene.canvas.removeEventListener('pointerleave', clearHover)
       removeCameraMoveStart()
       actionsRef.current = null
+      roadsRef.current = null
+      roads.destroy()
       motion.destroy()
       handler.destroy()
       scenes.forEach(item => item.models.destroy())
@@ -283,6 +295,24 @@ function App() {
       </div>
 
       <aside className="overview-stack" aria-label="도시 요약" aria-hidden={selected} inert={selected}>
+        <section className="glass-card road-card" aria-label="도로 흐름 효과">
+          <div className="card-heading"><h2>ROAD FLOW</h2><button className="road-toggle" aria-pressed={roadsEnabled} onClick={() => {
+            const value = !roadsEnabled; setRoadsEnabled(value); roadsRef.current?.setEnabled(value)
+          }}>{roadsEnabled ? '도로 켜짐' : '도로 꺼짐'}</button></div>
+          <div className="road-controls">
+            <button className="road-play" disabled={!roadsEnabled} aria-label={roadsPlaying ? '도로 흐름 일시정지' : '도로 흐름 재생'} onClick={() => {
+              const value = !roadsPlaying; setRoadsPlaying(value); roadsRef.current?.setPlaying(value)
+            }}>{roadsPlaying ? 'Ⅱ 일시정지' : '▶ 재생'}</button>
+            <label><span>속도</span><input type="range" min="0.25" max="3" step="0.25" value={roadSpeed} disabled={!roadsEnabled} onChange={event => {
+              const value = Number(event.target.value); setRoadSpeed(value); roadsRef.current?.setSpeed(value)
+            }} /><output>{roadSpeed}×</output></label>
+          </div>
+          <p className="road-status" role="status">{!roadsEnabled ? '도로 레이어 숨김' : roadState.status === 'loading' ? '가까운 도로부터 불러오는 중…'
+            : roadState.status === 'error' ? roadState.message : roadState.message ?? (roadState.status === 'idle' ? '지도 준비 중…'
+            : `도로 ${roadState.count.toLocaleString('ko-KR')}개 · ${roadState.limited ? '근거리 우선 · 확대하면 더 보입니다' : '가까운 도로 우선'}`)}</p>
+          {roadsEnabled && roadState.status === 'error' && <button className="road-retry" onClick={() => void roadsRef.current?.refresh()}>다시 불러오기</button>}
+          <p className="road-note">선 좌표 순서에 따른 시각 효과 · 실제 교통 정보 아님</p>
+        </section>
         <section className="glass-card condition-card"><div className="card-heading"><h2>CONDITION</h2><span className="mini-code">SEOUL / 01</span></div>
           <div className="condition-grid"><div><span>Buildings <Icon name="building" size={14} /></span><strong>{ready ? String(buildings.length).padStart(2, '0') : '—'} <small>건물</small></strong></div><div><span>Levels <Icon name="layers" size={14} /></span><strong>{catalog?.storeys.length ?? '—'} <small>레벨</small></strong></div><div><span>Height <span>↥</span></span><strong>{buildingHeight.toFixed(1)} <small>m</small></strong></div><div><span>Footprint <Icon name="grid" size={14} /></span><strong>{(width * depth).toFixed(0)} <small>m²</small></strong></div></div>
           <p className="micro-note">모델 기준 · Footprint는 경계 상자 면적</p>
