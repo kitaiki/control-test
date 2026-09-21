@@ -65,6 +65,7 @@ function App() {
       navigationHelpButton: false, sceneModePicker: false,
       selectionIndicator: false, timeline: false,
       requestRenderMode: true, maximumRenderTimeChange: Infinity,
+      scene3DOnly: true,
     })
     viewer.scene.globe.baseColor = Color.fromCssColorString('#182222')
     viewer.scene.globe.depthTestAgainstTerrain = true

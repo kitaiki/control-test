@@ -2,7 +2,7 @@ import { fetchRoadData, ROAD_LIMIT } from './roadData.ts'
 import type { RoadBounds, RoadData, RoadFeature, RoadLine } from './roadData.ts'
 
 type Point = [number, number]
-type Query = { bounds: RoadBounds; origin: Point; range: number }
+export type RoadQuery = { bounds: RoadBounds; origin: Point; range: number }
 type Tile = { bounds: RoadBounds; depth: number; distance: number }
 const METERS_PER_DEGREE = 111_320
 const TILE_LIMIT = 400
@@ -10,7 +10,7 @@ const MAX_REQUESTS = 24
 
 // The horizon can make computeViewRectangle span most of the city at a low pitch.
 // Intersect it with a bounded neighborhood around the camera's ground position.
-export function createRoadQuery(view: RoadBounds, origin: Point, height: number): Query | undefined {
+export function createRoadQuery(view: RoadBounds, origin: Point, height: number): RoadQuery | undefined {
   const range = Math.max(800, Math.min(5000, Math.max(0, height) * 4))
   const dx = range / (METERS_PER_DEGREE * Math.max(0.01, Math.cos(origin[1] * Math.PI / 180)))
   const dy = range / METERS_PER_DEGREE
@@ -18,6 +18,29 @@ export function createRoadQuery(view: RoadBounds, origin: Point, height: number)
     Math.min(view[2], origin[0] + dx), Math.min(view[3], origin[1] + dy)]
   if (bounds[0] >= bounds[2] || bounds[1] >= bounds[3]) return undefined
   return { bounds, origin, range }
+}
+
+// A small margin lets complete results survive minor pans without retaining a tile cache.
+export function padRoadQuery(query: RoadQuery): RoadQuery {
+  const [west, south, east, north] = query.bounds
+  const dx = Math.min((east - west) * 0.1, 100 / (METERS_PER_DEGREE * Math.max(0.01, Math.cos(query.origin[1] * Math.PI / 180))))
+  const dy = Math.min((north - south) * 0.1, 100 / METERS_PER_DEGREE)
+  return { ...query, bounds: [Math.max(-180, west - dx), Math.max(-90, south - dy),
+    Math.min(180, east + dx), Math.min(90, north + dy)] }
+}
+
+export function sameRoadQuery(a: RoadQuery, b: RoadQuery): boolean {
+  return Math.abs(a.range - b.range) < 1e-6
+    && a.origin.every((value, i) => Math.abs(value - b.origin[i]) < 1e-10)
+    && a.bounds.every((value, i) => Math.abs(value - b.bounds[i]) < 1e-10)
+}
+
+export function canReuseRoadQuery(previous: RoadQuery, coverage: RoadQuery, next: RoadQuery, limited: boolean): boolean {
+  // Truncated results cannot prove coverage, and moving changes nearest-road priority.
+  if (limited) return sameRoadQuery(previous, next)
+  const [west, south, east, north] = coverage.bounds
+  return next.bounds[0] >= west && next.bounds[1] >= south
+    && next.bounds[2] <= east && next.bounds[3] <= north
 }
 
 function relative(point: Point, origin: Point): Point {
@@ -79,7 +102,7 @@ function split(bounds: RoadBounds, divisions: number): RoadBounds[] {
   })
 }
 
-export async function fetchNearbyRoadData(query: Query, signal: AbortSignal,
+export async function fetchNearbyRoadData(query: RoadQuery, signal: AbortSignal,
   fetchTile: typeof fetchRoadData = fetchRoadData): Promise<RoadData> {
   function tile(bounds: RoadBounds, depth: number): Tile {
     const nearest: Point = [Math.max(bounds[0], Math.min(bounds[2], query.origin[0])),

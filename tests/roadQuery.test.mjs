@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { createRoadQuery, roadDistance, clipRoadLines, fetchNearbyRoadData } from '../src/roadQuery.ts'
+import { canReuseRoadQuery, padRoadQuery, createRoadQuery, roadDistance, clipRoadLines, fetchNearbyRoadData } from '../src/roadQuery.ts'
 import { parseRoadData, ROAD_LIMIT } from '../src/roadData.ts'
 
 const feature = (id, x, y, length = 0.00001) => ({ type: 'Feature', id,
@@ -88,4 +88,18 @@ test('overloaded areas have bounded requests and cancellation rejects stale resu
     controller.abort()
     return { features: [], lines: [], featureCount: 0, limited: false }
   }), { name: 'AbortError' })
+})
+
+
+test('reuse requires containment, and incomplete results cannot be reused after zoom or movement', () => {
+  const query = { bounds: [126.97, 37.56, 126.98, 37.57], origin: [126.975, 37.565], range: 800 }
+  const coverage = padRoadQuery(query)
+  const smallPan = { ...query, bounds: query.bounds.map((v, i) => i % 2 === 0 ? v + 0.0001 : v), origin: [126.9751, 37.565] }
+  assert.equal(canReuseRoadQuery(query, coverage, smallPan, false), true)
+  assert.equal(canReuseRoadQuery(query, coverage, smallPan, true), false)
+  assert.equal(canReuseRoadQuery(query, coverage, { ...query, range: 1600 }, true), false)
+  assert.equal(canReuseRoadQuery(query, coverage, { ...query, bounds: [126.97, 37.56, 127, 37.57] }, false), false)
+  assert.equal(canReuseRoadQuery(query, coverage, query, true), true)
+  const marginMeters = (query.bounds[0] - coverage.bounds[0]) * 111320 * Math.cos(query.origin[1] * Math.PI / 180)
+  assert.ok(marginMeters > 0 && marginMeters <= 100.00001)
 })

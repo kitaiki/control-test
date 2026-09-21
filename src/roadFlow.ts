@@ -3,7 +3,8 @@ import {
   GroundPolylinePrimitive, Material, Math as CesiumMath, PolylineMaterialAppearance,
 } from 'cesium'
 import type { Viewer } from 'cesium'
-import { createRoadQuery, fetchNearbyRoadData } from './roadQuery'
+import { canReuseRoadQuery, createRoadQuery, fetchNearbyRoadData, padRoadQuery, sameRoadQuery } from './roadQuery.ts'
+import type { RoadQuery } from './roadQuery.ts'
 import type { RoadBounds } from './roadData'
 
 export type RoadState = { status: 'idle' | 'loading' | 'ready' | 'error'; count: number; limited: boolean; message?: string }
@@ -36,6 +37,8 @@ export function createRoadFlow(viewer: Viewer, onState: (state: RoadState) => vo
   let pendingPrimitive: GroundPolylinePrimitive | undefined
   let removeReady: (() => void) | undefined
   let controller: AbortController | undefined
+  let inFlightQuery: RoadQuery | undefined
+  let loaded: { query: RoadQuery; coverage: RoadQuery; count: number; limited: boolean } | undefined
   let disposed = false
   let enabled = true
   let playing = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -67,36 +70,70 @@ export function createRoadFlow(viewer: Viewer, onState: (state: RoadState) => vo
     if (pendingPrimitive) viewer.scene.groundPrimitives.remove(pendingPrimitive)
     pendingPrimitive = undefined
   }
-  async function refresh() {
-    clearTimeout(debounce)
+  function cancelPending() {
     controller?.abort()
-    const request = ++generation
+    controller = undefined
+    inFlightQuery = undefined
+    generation++
     clearPending()
-    updateTimer()
+  }
+  function clearLoaded() {
+    if (primitive) viewer.scene.groundPrimitives.remove(primitive)
+    primitive = undefined
+    loaded = undefined
+  }
+  async function refresh(force = false) {
+    clearTimeout(debounce)
     if (disposed || !enabled) return
     const rect = viewer.camera.computeViewRectangle(viewer.scene.globe.ellipsoid)
-    if (!rect) { publish({ ...state, status: 'ready', message: '지도를 향해 카메라를 이동하세요.' }); return }
+    if (!rect) {
+      cancelPending()
+      updateTimer()
+      publish({ ...state, status: 'ready', message: '지도를 향해 카메라를 이동하세요.' })
+      return
+    }
     const bounds = [rect.west, rect.south, rect.east, rect.north].map(CesiumMath.toDegrees) as RoadBounds
-    if (bounds[0] > bounds[2]) { publish({ ...state, status: 'ready', message: '서울 지역을 확대하세요.' }); return }
+    if (bounds[0] > bounds[2]) {
+      cancelPending()
+      updateTimer()
+      publish({ ...state, status: 'ready', message: '서울 지역을 확대하세요.' })
+      return
+    }
     const camera = viewer.camera.positionCartographic
     const query = createRoadQuery(bounds, [CesiumMath.toDegrees(camera.longitude), CesiumMath.toDegrees(camera.latitude)], camera.height)
     if (!query) {
-      if (primitive) viewer.scene.groundPrimitives.remove(primitive)
-      primitive = undefined
+      cancelPending()
+      clearLoaded()
       publish({ status: 'ready', count: 0, limited: false, message: '가까운 지면이 보이도록 카메라를 아래로 기울이세요.' })
       updateTimer()
       viewer.scene.requestRender()
       return
     }
+    if (!force && inFlightQuery && sameRoadQuery(inFlightQuery, query)) return
+    if (!force && loaded && canReuseRoadQuery(loaded.query, loaded.coverage, query, loaded.limited)) {
+      cancelPending()
+      publish({ status: 'ready', count: loaded.count, limited: loaded.limited })
+      updateTimer()
+      viewer.scene.requestRender()
+      return
+    }
+    cancelPending()
+    updateTimer()
+    const request = generation
+    const coverage = padRoadQuery(query)
+    inFlightQuery = query
     controller = new AbortController()
     const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(20_000)])
     publish({ ...state, status: 'loading', message: undefined })
     try {
-      const data = await fetchNearbyRoadData(query, signal)
+      const data = await fetchNearbyRoadData(coverage, signal)
       if (disposed || request !== generation) return
+      const completed = { query, coverage, count: data.featureCount, limited: data.limited }
       if (!data.lines.length) {
-        if (primitive) viewer.scene.groundPrimitives.remove(primitive)
-        primitive = undefined
+        clearLoaded()
+        loaded = completed
+        inFlightQuery = undefined
+        controller = undefined
         publish({ status: 'ready', count: 0, limited: data.limited })
         updateTimer()
         viewer.scene.requestRender()
@@ -119,7 +156,10 @@ export function createRoadFlow(viewer: Viewer, onState: (state: RoadState) => vo
         if (primitive) viewer.scene.groundPrimitives.remove(primitive)
         primitive = next
         pendingPrimitive = undefined
-        publish({ status: 'ready', count: data.featureCount, limited: data.limited })
+        loaded = completed
+        inFlightQuery = undefined
+        controller = undefined
+        publish({ status: 'ready', count: completed.count, limited: completed.limited })
         updateTimer()
         viewer.scene.requestRender()
       })
@@ -127,11 +167,15 @@ export function createRoadFlow(viewer: Viewer, onState: (state: RoadState) => vo
       viewer.scene.requestRender()
     } catch (error) {
       if (disposed || request !== generation) return
-      publish({ ...state, status: 'error', message: signal.aborted ? '도로 조회 시간이 초과되었습니다. 다시 시도하세요.'
+      const timedOut = signal.aborted
+      cancelPending()
+      updateTimer()
+      publish({ ...state, status: 'error', message: timedOut ? '도로 조회 시간이 초과되었습니다. 다시 시도하세요.'
         : error instanceof Error ? error.message : '도로를 불러오지 못했습니다.' })
     }
   }
   function scheduleRefresh() {
+    if (disposed || !enabled) return
     clearTimeout(debounce)
     debounce = setTimeout(() => void refresh(), 250)
   }
@@ -144,16 +188,15 @@ export function createRoadFlow(viewer: Viewer, onState: (state: RoadState) => vo
   resize.observe(viewer.scene.canvas)
   document.addEventListener('visibilitychange', updateTimer)
   return {
-    refresh,
+    refresh: () => refresh(true),
     setEnabled(value: boolean) {
+      if (disposed || enabled === value) return
       enabled = value
-      if (primitive) primitive.show = value
       if (!value) {
         clearTimeout(debounce)
-        controller?.abort()
-        generation++
-        clearPending()
-        publish({ ...state, status: primitive ? 'ready' : 'idle' })
+        cancelPending()
+        clearLoaded()
+        publish({ status: 'idle', count: 0, limited: false })
       } else void refresh()
       updateTimer()
       viewer.scene.requestRender()
@@ -161,16 +204,15 @@ export function createRoadFlow(viewer: Viewer, onState: (state: RoadState) => vo
     setPlaying(value: boolean) { playing = value; updateTimer() },
     setSpeed(value: number) { speed = value },
     destroy() {
+      if (disposed) return
       disposed = true
-      generation++
-      controller?.abort()
+      cancelPending()
       clearTimeout(debounce)
       clearInterval(timer)
       removeMoveEnd()
       resize.disconnect()
       document.removeEventListener('visibilitychange', updateTimer)
-      clearPending()
-      if (primitive) viewer.scene.groundPrimitives.remove(primitive)
+      clearLoaded()
       material.destroy()
     },
   }
